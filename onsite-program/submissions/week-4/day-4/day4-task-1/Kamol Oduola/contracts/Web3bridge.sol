@@ -50,4 +50,8 @@ contract Web3bridge{
 
     return false;
 }
+
+   function getEmployees() external view returns (address[] memory) {
+    return employeesList;
+}
 }
