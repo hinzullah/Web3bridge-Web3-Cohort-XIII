@@ -1,0 +1,79 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "C:\\Users\\DONKAMS\\Desktop\\Web3bridge-Web3-Cohort-XIII\\onsite-program\\submissions\\week-4\\day-6\\day-6-task-1\\Kamol-Oduola\\manageTeacher\\contracts\\iSchool.sol": {
+      "lastModificationDate": 1754138151737,
+      "contentHash": "7d17a1ab8ba3bddab83b88f038aa16ff",
+      "sourceName": "contracts/iSchool.sol",
+      "solcConfig": {
+        "version": "0.8.30",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "Ischool"
+      ]
+    },
+    "C:\\Users\\DONKAMS\\Desktop\\Web3bridge-Web3-Cohort-XIII\\onsite-program\\submissions\\week-4\\day-6\\day-6-task-1\\Kamol-Oduola\\manageTeacher\\contracts\\manageTeacher.sol": {
+      "lastModificationDate": 1754391847972,
+      "contentHash": "3f9c7849ff82d35bbd52cd05662e8d05",
+      "sourceName": "contracts/manageTeacher.sol",
+      "solcConfig": {
+        "version": "0.8.30",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./iSchool.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "ManageTeacher"
+      ]
+    }
+  }
+}

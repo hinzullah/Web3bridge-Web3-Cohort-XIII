@@ -26,7 +26,7 @@ describe("ERC20", function () {
 
       expect(await token.name()).to.equal("EBA");
       expect(await token.symbol()).to.equal("Garri");
-      expect(await token.decimals()).to.equal(18n);
+      expect(await token.decimals()).to.equal(18);
     });
 
     //Should assign total supply to owner
@@ -36,7 +36,7 @@ describe("ERC20", function () {
       const ownerBalance = await token.balanceOf(owner.address);
 
       expect(ownerBalance).to.equal(totalSupply);
-      expect(totalSupply).to.equal(1000000n);
+      expect(totalSupply).to.equal(1000000);
     });
 
     //checking for owner balance
@@ -57,8 +57,8 @@ describe("ERC20", function () {
 
       await token
         .connect(address_from, 1000)
-        .transferFrom(owner.address, address_to.address, 500n);
-      expect(await token.balanceOf(address_to)).to.equal(500n);
+        .transferFrom(owner.address, address_to.address, 500);
+      expect(await token.balanceOf(address_to)).to.equal(500);
     });
 
     //Should not allow transfer of more than balance
