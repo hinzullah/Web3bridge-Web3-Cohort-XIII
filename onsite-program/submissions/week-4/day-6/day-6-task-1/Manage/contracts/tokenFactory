@@ -1,0 +1,25 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.28;
+
+import "./manageTeacher.sol";
+
+contract TeacherFactory {
+    address[] public allManageContracts;
+
+    event TeacherContractCreated(address indexed contractAddress);
+
+    function createManageContract() external returns (address) {
+        ManageTeacher teacherManager = new ManageTeacher();
+        address newAddress = address(teacherManager);
+
+        allManageContracts.push(newAddress);
+        emit TeacherContractCreated(newAddress);
+
+        return newAddress;
+    }
+
+    function getAllManageContracts() external view returns (address[] memory) {
+        return allManageContracts;
+    }
+}
+
