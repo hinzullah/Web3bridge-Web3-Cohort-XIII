@@ -5,33 +5,51 @@ import {
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { expect } from "chai";
 import hre from "hardhat";
+import { parseEther } from "ethers";
 
 describe("MultiSigWallet", function () {
-  async function deployMultisigFixture() {
+  async function deployMultisigWallet() {
     const [owner1, owner2, owner3, owner4, recipient] =
       await hre.ethers.getSigners();
 
-    const requiredConfirmations = 2;
-    const owners = [owner1.address, owner2.address, owner3.address];
-
-    const wallet = await hre.ethers.deployContract("MultiSigWallet", [
-      owners,
-      requiredConfirmations,
-    ]);
-
-    return { wallet, owner1, owner2, owner3, owner4, recipient };
+    const MultiSigWallet = await hre.ethers.getContractFactory(
+      "MultiSigWallet"
+    );
+    const multisig = await MultiSigWallet.deploy(
+      [owner1.address, owner2.address, owner3.address],
+      2
+    );
+    return { multisig, owner1, owner2, owner3, recipient };
   }
 
-  describe("Deployment", function () {
-    it("Should deploy with the correct owners and required confirmations", async function () {
-      const { wallet, owner1, owner2, owner3 } = await loadFixture(
-        deployMultisigFixture
+  describe("submitTransaction", function () {
+    it("should allow an owner to submit a transaction", async function () {
+      const { multisig, owner1, recipient } = await loadFixture(
+        deployMultisigWallet
       );
 
-      expect(await wallet.isOwner(owner1.address)).to.be.true;
-      expect(await wallet.isOwner(owner2.address)).to.be.true;
-      expect(await wallet.isOwner(owner3.address)).to.be.true;
-      expect(await wallet.requiredConfirmations()).to.equal(2);
+      const amount = hre.ethers.parseEther("1");
+
+      await multisig
+        .connect(owner1)
+        .submitTransaction(recipient.address, amount);
+
+      const txn = await multisig.transactions(0);
+
+      expect(txn.to).to.equal(recipient.address);
+      expect(txn.amount).to.equal(amount);
+      expect(txn.approvals).to.equal(0);
+      expect(txn.executed).to.equal(false);
+    });
+    it("should revert if a non-owner tries to submit a transaction", async function () {
+      const { multisig, recipient } = await loadFixture(deployMultisigWallet);
+      const [_, __, ___, notOwner] = await hre.ethers.getSigners();
+
+      const amount = hre.ethers.parseEther("1");
+
+      await expect(
+        multisig.connect(notOwner).submitTransaction(recipient.address, amount)
+      ).to.be.rejectedWith("Not an owner");
     });
   });
 });
