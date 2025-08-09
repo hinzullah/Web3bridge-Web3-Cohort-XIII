@@ -3,69 +3,57 @@ pragma solidity ^0.8.20;
 
 import "./TicketToken.sol";
 import "./TicketNft.sol";
+import {Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
-contract EventTicketing {
-    address public organizer;
-    TicketToken public ticketToken;
-    TicketNft public ticketNft;
+contract EventTicketing is Ownable{
+    TicketToken public token;
+    TicketNft public nft;
+    
 
-    uint256 public nextTicketId;
-    uint256 public ticketCount;
-
-    enum Status { Going, NotGoing, Default }
-
-    struct EventDetails {
-        address organizer;
-        string event_name;
-        string event_venue;
-    }
 
     struct TicketDetails {
         uint256 id;
         uint256 ticket_price;
         uint256 ticket_supply;
-        Status status;
+        uint256 sold;
     }
 
     mapping(uint256 => TicketDetails) public tickets;
-    mapping(address => uint256[]) public userTickets;
+    uint256 public ticketCount;
 
-    constructor(address _ticketToken, address _ticketNft) {
-        organizer = msg.sender;
-        ticketToken = TicketToken(_ticketToken);
-        ticketNft = TicketNft(_ticketNft);
+    event TicketCreated(uint256 id, uint256 ticket_price, uint256 ticket_supply);
+    event TicketBought(address buyer, uint256 ticketId, uint256 nftId);
+
+    constructor(address _token, address _nft) Ownable(msg.sender){
+        token = TicketToken(_token);
+        nft = TicketNft(_nft);
     }
 
-    function createTicket(uint256 price, uint256 supply) external {
-        require(msg.sender == organizer, "Only organizer can create tickets");
+    function createTicket(uint256 _ticket_price, uint256 _ticket_supply) external onlyOwner {
+        require(_ticket_price > 0 , "Ticket price must be greater than 0");
+        require(_ticket_supply > 0, "Ticket supply must be greater than 0");
 
-        tickets[nextTicketId] = TicketDetails({
-            id: nextTicketId,
-            ticket_price: price,
-            ticket_supply: supply,
-            status: Status.Default
-        });
+        ticketCount++;
+        tickets[ticketCount] = TicketDetails(ticketCount, _ticket_price, _ticket_supply, 0);
 
-        nextTicketId++;
+        emit TicketCreated(ticketCount, _ticket_price, _ticket_supply);
+
     }
 
-    function buyTicket(uint256 ticketId, string memory tokenURI) external {
-        TicketDetails storage ticket = tickets[ticketId];
+    function buyTicket(uint256 ticketId) external {
+        TicketDetails storage t = tickets[ticketId];
 
-        require(ticket.ticket_supply > 0, "Sold Out");
+        require(t.id != 0, "Ticket type does not exist");
+        require(t.sold < t.ticket_supply, "Sold out");
 
-        // Transfer ERC20 tokens from buyer to organizer
-        require(
-            ticketToken.transferFrom(msg.sender, organizer, ticket.ticket_price),
-            "Payment failed"
-        );
+        // Transfer ERC20 tokens from buyer to owner
+        require(token.transferFrom(msg.sender, owner(), t.ticket_price), "Payment failed");
 
         // Mint the NFT to buyer
-        ticketNft.mintTicketNft(msg.sender, ticketCount, tokenURI);
+        uint256 nftId = nft.mint(msg.sender, ticketId);
 
-        // Track ownership and reduce supply
-        userTickets[msg.sender].push(ticketCount);
-        ticketCount++;
-        ticket.ticket_supply--;
+        t.sold++;
+
+        emit TicketBought(msg.sender, ticketId, nftId);
     }
 }
