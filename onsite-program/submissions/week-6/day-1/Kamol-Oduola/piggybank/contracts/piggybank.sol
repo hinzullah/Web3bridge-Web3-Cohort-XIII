@@ -9,7 +9,8 @@ interface IERC20 {
 }
 
 contract Piggybank {
-    address public factoryOwner; // where withdrawal fees go
+    // where withdrawal fees go
+    address public factoryOwner; 
 
     struct SavingPlan {
         address owner;
@@ -27,6 +28,8 @@ contract Piggybank {
         factoryOwner = _factoryOwner;
     }
 
+    event DepositMade(address indexed user, uint256 amount, address token, uint256 lockPeriod);
+
     function deposit(uint256 _amount, address _token, uint256 _lockPeriod) external payable {
         require(_amount > 0, "Deposit amount should be greater than 0");
         require(_lockPeriod > 0, "Lock period should be more than 0");
@@ -41,6 +44,7 @@ contract Piggybank {
         savings[msg.sender].push(
             SavingPlan(msg.sender, block.timestamp, _amount, _lockPeriod, _token, _amount)
         );
+         emit DepositMade(msg.sender, _amount, _token, _lockPeriod);
     }
 
     function withdraw(uint256 _planIndex) external {
