@@ -19,9 +19,12 @@ contract GatedDAO {
     mapping(uint256 => uint256) public votes;
 
     constructor(address _roleContract, address _membershipNFT) {
-        roleContract = IERC7432(_roleContract);
-        membershipNFT = _membershipNFT;
-        IMINT(membershipNFT).mint(msg.sender);
+    roleContract = IERC7432(_roleContract);
+    membershipNFT = _membershipNFT;
+    }
+
+    function initializeMembership(address to) external {
+        IMINT(membershipNFT).mint(to);
     }
 
     modifier onlyVoter(uint256 tokenId) {
