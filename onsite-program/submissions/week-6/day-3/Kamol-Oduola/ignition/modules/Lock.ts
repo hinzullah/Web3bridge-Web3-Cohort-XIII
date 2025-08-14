@@ -7,16 +7,12 @@ const MembershipNFTModule = buildModule("MembershipNFTModule", (m) => {
   // Step 1: Deploy the MembershipNFT contract
   const membership = m.contract("MembershipNFT");
 
-  // Step 2: Define voting period (example: 1 week in seconds)
-  // You can change this to whatever your DAO expects
-  const votingPeriod = 7 * 24 * 60 * 60; // 604800 seconds
+  const simpleERC7432 = m.contract("SimpleERC7432");
 
-  // Step 3: Deploy TokenGatedDAO with BOTH constructor parameters
-  // Pass the deployed MembershipNFT reference, NOT just its address
-  const gatedDao = m.contract("TokenGatedDAO", [membership, votingPeriod]);
+  const gatedDao = m.contract("GatedDAO", [simpleERC7432, membership]);
 
   // Step 4: Return deployed contracts so they can be used later
-  return { membership, gatedDao };
+  return { membership, gatedDao, simpleERC7432 };
 });
 
 export default MembershipNFTModule;
