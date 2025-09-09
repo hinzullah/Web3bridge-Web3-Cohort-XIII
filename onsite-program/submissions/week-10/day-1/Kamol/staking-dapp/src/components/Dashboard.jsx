@@ -1,5 +1,6 @@
 import { useAccount, useReadContract } from "wagmi";
 import { contractConfig } from "../lib/contract";
+import React from "react";
 
 export default function Dashboard() {
   const { address } = useAccount();

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import React from "react";
 import {
   useAccount,
   useWriteContract,
@@ -20,7 +21,7 @@ export default function StakeForm() {
 
   const handleApprove = () => {
     writeApprove({
-      address: "0xYourTokenAddressHere", // stakingToken address
+      address: "0x4e7dfc0650af7c1619e842a78a7ca0ea57c1077f", // stakingToken address
       abi: erc20Abi,
       functionName: "approve",
       args: [stakingAddress, amount],
